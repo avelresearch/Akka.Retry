@@ -1,7 +1,7 @@
 package com.actors
 
 import actors.EmailNotifier
-import akka.actor.{Actor, ActorRef, Props, SupervisorStrategy}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy}
 import akka.event.Logging
 import akka.routing.RoundRobinPool
 import messages.EmailNotifier.{RetrySendEmail, SendEmail}
@@ -9,9 +9,12 @@ import messages.Master.{Check, SendEmailFailed}
 
 import scala.concurrent.duration._
 
-class Master extends Actor {
+class Master extends Actor with ActorLogging {
 
-  val log = Logging(context.system, this)
+  import org.apache.log4j.LogManager
+
+
+  val logger = Logging(context.system, this)
 
   val emailHandlerPool: ActorRef = context.actorOf( RoundRobinPool(5, supervisorStrategy = SupervisorStrategy.defaultStrategy)
     .props( Props.create(classOf[EmailNotifier], self) ) )

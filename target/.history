@@ -32,3 +32,9 @@ clean
 compile
 exit
 run
+exit
+run
+clear
+clean
+compile
+exit

@@ -1,6 +1,6 @@
 package actors
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.event.Logging
 import com.utils.BaseEmailClient
 import messages.EmailNotifier.{RetrySendEmail, SendEmail}
@@ -8,10 +8,11 @@ import messages.Master.SendEmailFailed
 
 import scala.util.{Failure, Success, Try}
 
-class EmailNotifier(master: ActorRef) extends Actor {
+class EmailNotifier(master: ActorRef) extends Actor with ActorLogging {
 
   val maxNumberOfRetries = 5
-  val log = Logging(context.system, this)
+
+  val logger = Logging(context.system, this)
 
   val client = new BaseEmailClient()
 
@@ -34,7 +35,7 @@ class EmailNotifier(master: ActorRef) extends Actor {
 
         result match {
           case Right(_) => log.info("Passed")
-          case Left(_) if (counter < maxNumberOfRetries) => {
+          case Left(_) if (counter < maxNumberOfRetries - 1) => {
             log.error(s"Failed to send email. $counter")
             master ! SendEmailFailed( email, counter)
           }

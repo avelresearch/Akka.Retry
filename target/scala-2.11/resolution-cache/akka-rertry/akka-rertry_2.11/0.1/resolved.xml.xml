@@ -4,7 +4,7 @@
 		module="akka-rertry_2.11"
 		revision="0.1"
 		status="integration"
-		publication="20180521195438"
+		publication="20180521205525"
 	>
 		<description>
 		Akka.Rertry
@@ -34,5 +34,6 @@
 		<dependency org="org.scala-lang" name="scala-library" rev="2.11.8" conf="scala-tool->default,optional(default);compile->default(compile)"/>
 		<dependency org="com.typesafe.akka" name="akka-actor_2.11" rev="2.5.12" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.akka" name="akka-testkit_2.11" rev="2.5.12" conf="test->default(compile)"/>
+		<dependency org="log4j" name="log4j" rev="1.2.14" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>
