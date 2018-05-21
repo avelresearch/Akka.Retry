@@ -3,7 +3,7 @@ package actors
 import akka.actor.{Actor, ActorRef}
 import akka.event.Logging
 import com.utils.BaseEmailClient
-import messages.EmailNotifier.SendEmail
+import messages.EmailNotifier.{RetrySendEmail, SendEmail}
 import messages.Master.SendEmailFailed
 
 import scala.util.{Failure, Success, Try}
@@ -18,10 +18,13 @@ class EmailNotifier(master: ActorRef) extends Actor {
   def receive = {
 
     case SendEmail(content) =>
-      self ! SendEmailFailed( SendEmail(content), 0 )
+      self ! RetrySendEmail( SendEmail(content), 0 )
 
-    case SendEmailFailed(email, counter) =>
+    case RetrySendEmail(email, counter) =>
       {
+
+        log.info("EmailNotifier: try send email")
+
         val result = Try{
           client.sendEmail(email.message)
         } match {
@@ -35,6 +38,8 @@ class EmailNotifier(master: ActorRef) extends Actor {
             log.error(s"Failed to send email. $counter")
             master ! SendEmailFailed( email, counter)
           }
+          case Left(ex) =>
+            log.error(s"EmailNotifier: failed to send email after: $counter")
         }
       }
 

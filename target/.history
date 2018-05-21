@@ -25,3 +25,10 @@ exit
 exity
 clear
 exit
+clean
+compile
+clear
+clean
+compile
+exit
+run
